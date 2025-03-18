@@ -46,10 +46,10 @@ public class TeamController {
         team.setId(id);
         return ResponseEntity.ok(teamService.updateTeam(team));
     }
-
-    @DeleteMapping("/teams/{id}")
-    public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
-        teamService.deleteTeam(id);
-        return ResponseEntity.noContent().build();
-    }
+// TODO: Implement cascading deletion in the entities to get it to work
+//    @DeleteMapping("/teams/{id}")
+//    public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
+//        teamService.deleteTeam(id);
+//        return ResponseEntity.noContent().build();
+//    }
 }

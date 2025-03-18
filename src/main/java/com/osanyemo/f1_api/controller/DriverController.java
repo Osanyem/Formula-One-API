@@ -46,9 +46,10 @@ public class DriverController {
         return ResponseEntity.ok(driverService.updateDriver(driver));
     }
 
-    @DeleteMapping("/drivers/{id}")
-    public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
-        driverService.deleteDriver(id);
-        return ResponseEntity.noContent().build();
-    }
+//  TODO: Implement cascading deletion in the entities to get it to work
+//    @DeleteMapping("/drivers/{id}")
+//    public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
+//        driverService.deleteDriver(id);
+//        return ResponseEntity.noContent().build();
+//    }
 }

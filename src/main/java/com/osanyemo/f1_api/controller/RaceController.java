@@ -50,10 +50,10 @@ public class RaceController {
         race.setId(id);
         return ResponseEntity.ok(raceService.updateRace(race));
     }
-
-    @DeleteMapping("/races/{id}")
-    public ResponseEntity<Void> deleteRace(@PathVariable Long id) {
-        raceService.deleteRace(id);
-        return ResponseEntity.noContent().build();
-    }
+//  TODO: Implement cascading deletion in the entities to get it to work
+//    @DeleteMapping("/races/{id}")
+//    public ResponseEntity<Void> deleteRace(@PathVariable Long id) {
+//        raceService.deleteRace(id);
+//        return ResponseEntity.noContent().build();
+//    }
 }
