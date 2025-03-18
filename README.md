@@ -134,5 +134,5 @@ springdoc.api-docs.path=/api-docs
 This project is licensed under the MIT License.
 
 ## Contact
-For questions or feature requests, open an issue on GitHub or contact `your.email@example.com`. 
+For questions or feature requests, open an issue on GitHub or contact `osanyemo@gmail.com`. 
 
