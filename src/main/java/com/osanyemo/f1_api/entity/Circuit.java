@@ -27,4 +27,6 @@ public class Circuit {
     private Double length;
 
     private Integer lapRecord;
+
+
 }

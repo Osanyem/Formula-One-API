@@ -27,7 +27,7 @@ public class Driver {
 
     private String nationality;
 
-    private LocalDate dateOfBirth;
+    private LocalDate dob;
 
     private Integer number;
 
