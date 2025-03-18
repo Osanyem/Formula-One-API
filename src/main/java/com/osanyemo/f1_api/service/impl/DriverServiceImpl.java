@@ -60,7 +60,7 @@ public class DriverServiceImpl implements DriverService {
     public DriverDTO updateDriver(Long id, DriverDTO driverDTO) {
         Driver driver = driverRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found with id: " + id));
-        updateEntity(driver, driverDTO);
+        updateDriverFromDto(driver, driverDTO);
         Driver updatedDriver = driverRepository.save(driver);
         return convertToDTO(updatedDriver);
     }
@@ -73,7 +73,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     private DriverDTO convertToDTO(Driver driver) {
-        return DriverDTO.builder()
+        DriverDTO dto = DriverDTO.builder()
                 .id(driver.getId())
                 .firstName(driver.getFirstName())
                 .lastName(driver.getLastName())
@@ -81,44 +81,43 @@ public class DriverServiceImpl implements DriverService {
                 .dateOfBirth(driver.getDate0fBirth())
                 .number(driver.getNumber())
                 .code(driver.getCode())
-                .currentTeam(driver.getCurrentTeam() != null ? convertToTeamDTO(driver.getCurrentTeam()) : null)
                 .build();
-    }
 
-    private Driver convertToEntity(DriverDTO driverDTO) {
-        Driver driver = new Driver();
-        updateEntity(driver, driverDTO);
-        return driver;
-    }
-
-    private void updateEntity(Driver driver, DriverDTO driverDTO) {
-        driver.setFirstName(driverDTO.getFirstName());
-        driver.setLastName(driverDTO.getLastName());
-        driver.setNationality(driverDTO.getNationality());
-        if (driverDTO.getDateOfBirth() != null) {
-            driver.setDate0fBirth(driverDTO.getDateOfBirth());
+        if (driver.getCurrentTeam() != null) {
+            dto.setCurrentTeam(convertToTeamDTO(driver.getCurrentTeam()));
         }
-        if (driverDTO.getNumber() != null) {
-            driver.setNumber(driverDTO.getNumber());
-        }
-        driver.setCode(driverDTO.getCode());
-        if (driverDTO.getCurrentTeam() != null) {
-            Team team = teamRepository.findById(driverDTO.getCurrentTeam().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Team not found with id: " + driverDTO.getCurrentTeam().getId()));
-            driver.setCurrentTeam(team);
-        } else {
-            driver.setCurrentTeam(null);
-        }
+        return dto;
     }
 
     private TeamDTO convertToTeamDTO(Team team) {
         return TeamDTO.builder()
                 .id(team.getId())
                 .name(team.getName())
-                .nationality(team.getNationality())
-                .baseLocation(team.getBaseLocation())
-                .teamPrincipal(team.getTeamPrincipal())
                 .constructor(team.getConstructor())
                 .build();
+        // Not including drivers to avoid recursion
+    }
+
+    private Driver convertToEntity(DriverDTO driverDTO) {
+        Driver driver = new Driver();
+        updateDriverFromDto(driver, driverDTO);
+        return driver;
+    }
+
+    private void updateDriverFromDto(Driver driver, DriverDTO driverDTO) {
+        driver.setFirstName(driverDTO.getFirstName());
+        driver.setLastName(driverDTO.getLastName());
+        driver.setNationality(driverDTO.getNationality());
+        driver.setDate0fBirth(driverDTO.getDateOfBirth());
+        driver.setNumber(driverDTO.getNumber());
+        driver.setCode(driverDTO.getCode());
+
+        if (driverDTO.getCurrentTeam() != null && driverDTO.getCurrentTeam().getId() != null) {
+            Team team = teamRepository.findById(driverDTO.getCurrentTeam().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Team not found with id: " + driverDTO.getCurrentTeam().getId()));
+            driver.setCurrentTeam(team);
+        } else {
+            driver.setCurrentTeam(null);
+        }
     }
 }

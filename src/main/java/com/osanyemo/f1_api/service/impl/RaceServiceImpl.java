@@ -3,6 +3,7 @@ package com.osanyemo.f1_api.service.impl;
 import com.osanyemo.f1_api.dto.*;
 import com.osanyemo.f1_api.entity.Circuit;
 import com.osanyemo.f1_api.entity.Race;
+import com.osanyemo.f1_api.entity.RaceResult;
 import com.osanyemo.f1_api.entity.Season;
 import com.osanyemo.f1_api.exception.ResourceNotFoundException;
 import com.osanyemo.f1_api.repository.CircuitRepository;
@@ -85,6 +86,12 @@ public class RaceServiceImpl implements RaceService {
     public void deleteRace(Long id) {
         Race race = raceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Race not found with id: " + id));
+
+        // Delete related race results first to avoid foreign key constraints
+        List<RaceResult> results = raceResultRepository.findByRace(race);
+        raceResultRepository.deleteAll(results);
+
+        // Now delete the race
         raceRepository.delete(race);
     }
 
@@ -136,6 +143,7 @@ public class RaceServiceImpl implements RaceService {
                 .location(circuit.getLocation())
                 .country(circuit.getCountry())
                 .length(circuit.getLength())
+                .numberOfLaps(circuit.getNumberOfLaps())
                 .lapRecord(circuit.getLapRecord())
                 .build();
     }
@@ -147,7 +155,7 @@ public class RaceServiceImpl implements RaceService {
                 .build();
     }
 
-    private RaceResultDTO convertToRaceResultDTO(com.osanyemo.f1_api.entity.RaceResult raceResult) {
+    private RaceResultDTO convertToRaceResultDTO(RaceResult raceResult) {
         return RaceResultDTO.builder()
                 .id(raceResult.getId())
                 .position(raceResult.getPosition())
@@ -167,6 +175,7 @@ public class RaceServiceImpl implements RaceService {
                 .firstName(driver.getFirstName())
                 .lastName(driver.getLastName())
                 .code(driver.getCode())
+                .currentTeam(null) // Avoid recursion
                 .build();
     }
 

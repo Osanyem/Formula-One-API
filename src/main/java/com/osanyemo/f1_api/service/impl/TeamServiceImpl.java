@@ -2,6 +2,7 @@ package com.osanyemo.f1_api.service.impl;
 
 import com.osanyemo.f1_api.dto.DriverDTO;
 import com.osanyemo.f1_api.dto.TeamDTO;
+import com.osanyemo.f1_api.entity.Driver;
 import com.osanyemo.f1_api.entity.Team;
 import com.osanyemo.f1_api.exception.ResourceNotFoundException;
 import com.osanyemo.f1_api.repository.DriverRepository;
@@ -59,7 +60,7 @@ public class TeamServiceImpl implements TeamService {
     public TeamDTO updateTeam(Long id, TeamDTO teamDTO) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Team not found with id: " + id));
-        updateEntity(team, teamDTO);
+        updateTeamFromDto(team, teamDTO);
         Team updatedTeam = teamRepository.save(team);
         return convertToDTO(updatedTeam);
     }
@@ -68,6 +69,14 @@ public class TeamServiceImpl implements TeamService {
     public void deleteTeam(Long id) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Team not found with id: " + id));
+
+        // Unlink drivers from this team before deletion
+        List<Driver> drivers = driverRepository.findByCurrentTeam(team);
+        drivers.forEach(driver -> {
+            driver.setCurrentTeam(null);
+            driverRepository.save(driver);
+        });
+
         teamRepository.delete(team);
     }
 
@@ -75,24 +84,18 @@ public class TeamServiceImpl implements TeamService {
         return TeamDTO.builder()
                 .id(team.getId())
                 .name(team.getName())
-                .nationality(team.getNationality())
-                .baseLocation(team.getBaseLocation())
-                .teamPrincipal(team.getTeamPrincipal())
                 .constructor(team.getConstructor())
                 .build();
     }
 
     private Team convertToEntity(TeamDTO teamDTO) {
         Team team = new Team();
-        updateEntity(team, teamDTO);
+        updateTeamFromDto(team, teamDTO);
         return team;
     }
 
-    private void updateEntity(Team team, TeamDTO teamDTO) {
+    private void updateTeamFromDto(Team team, TeamDTO teamDTO) {
         team.setName(teamDTO.getName());
-        team.setNationality(teamDTO.getNationality());
-        team.setBaseLocation(teamDTO.getBaseLocation());
-        team.setTeamPrincipal(teamDTO.getTeamPrincipal());
         team.setConstructor(teamDTO.getConstructor());
     }
 
