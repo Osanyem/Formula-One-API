@@ -1,7 +1,6 @@
 package com.osanyemo.f1_api.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +31,7 @@ public class Driver {
 
     private Integer number;
 
+//  TV display code e.g., HAM for Lewis Hamilton, ALB for Alex Albon
     private String code;
 
     @ManyToOne
