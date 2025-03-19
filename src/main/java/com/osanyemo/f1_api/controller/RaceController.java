@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -30,10 +31,6 @@ public class RaceController {
         return ResponseEntity.ok(raceService.getRaceById(id));
     }
 
-    @GetMapping("/races/season/{year}")
-    public ResponseEntity<List<Race>> getRacesBySeason(@PathVariable int year) {
-        return ResponseEntity.ok(raceService.getRacesBySeason(year));
-    }
 
     @GetMapping("/races/{id}/results")
     public ResponseEntity<List<RaceResult>> getRaceResults(@PathVariable Long id) {

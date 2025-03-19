@@ -41,13 +41,7 @@ public class RaceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Race not found with id: " + id));
     }
 
-    public List<Race> getRacesBySeason(int year) {
-        Optional<Season> season = Optional.ofNullable(seasonRepository.findByYear(year));
-        if (!season.isPresent()) {
-            throw new ResourceNotFoundException("Season not found for year: " + year);
-        }
-        return raceRepository.findBySeason(season.get());
-    }
+
 
     public List<RaceResult> getRaceResults(Long raceId) {
         Race race = raceRepository.findById(raceId)
